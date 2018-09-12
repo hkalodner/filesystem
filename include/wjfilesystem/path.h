@@ -78,12 +78,12 @@ public:
     path make_absolute() const {
 #if !defined(_WIN32)
         char temp[PATH_MAX];
-        if (realpath(str().c_str(), temp) == NULL)
+        if (realpath(str().c_str(), temp) == nullptr)
             throw std::runtime_error("Internal error in realpath(): " + std::string(strerror(errno)));
         return path(temp);
 #else
         std::wstring value = wstr(), out(MAX_PATH, '\0');
-        DWORD length = GetFullPathNameW(value.c_str(), MAX_PATH, &out[0], NULL);
+        DWORD length = GetFullPathNameW(value.c_str(), MAX_PATH, &out[0], nullptr);
         if (length == 0)
             throw std::runtime_error("Internal error in realpath(): " + std::to_string(GetLastError()));
         return path(out.substr(0, length));
@@ -250,7 +250,7 @@ public:
             return false;
         LARGE_INTEGER size;
         size.QuadPart = (LONGLONG) target_length;
-        if (SetFilePointerEx(handle, size, NULL, FILE_BEGIN) == 0) {
+        if (SetFilePointerEx(handle, size, nullptr, FILE_BEGIN) == 0) {
             CloseHandle(handle);
             return false;
         }
@@ -266,7 +266,7 @@ public:
     static path getcwd() {
 #if !defined(_WIN32)
         char temp[PATH_MAX];
-        if (::getcwd(temp, PATH_MAX) == NULL)
+        if (::getcwd(temp, PATH_MAX) == nullptr)
             throw std::runtime_error("Internal error in getcwd(): " + std::string(strerror(errno)));
         return path(temp);
 #else
@@ -280,7 +280,7 @@ public:
 #if defined(_WIN32)
     std::wstring wstr(path_type type = native_path) const {
         std::string temp = str(type);
-        int size = MultiByteToWideChar(CP_UTF8, 0, &temp[0], (int)temp.size(), NULL, 0);
+        int size = MultiByteToWideChar(CP_UTF8, 0, &temp[0], (int)temp.size(), nullptr, 0);
         std::wstring result(size, 0);
         MultiByteToWideChar(CP_UTF8, 0, &temp[0], (int)temp.size(), &result[0], size);
         return result;
@@ -291,10 +291,10 @@ public:
         std::string string;
         if (!wstring.empty()) {
             int size = WideCharToMultiByte(CP_UTF8, 0, &wstring[0], (int)wstring.size(),
-                            NULL, 0, NULL, NULL);
+                            nullptr, 0, nullptr, nullptr);
             string.resize(size, 0);
             WideCharToMultiByte(CP_UTF8, 0, &wstring[0], (int)wstring.size(),
-                                &string[0], size, NULL, NULL);
+                                &string[0], size, nullptr, nullptr);
         }
         set(string, type);
     }
@@ -330,7 +330,7 @@ protected:
 
 inline bool create_directory(const path& p) {
 #if defined(_WIN32)
-    return CreateDirectoryW(p.wstr().c_str(), NULL) != 0;
+    return CreateDirectoryW(p.wstr().c_str(), nullptr) != 0;
 #else
     return mkdir(p.str().c_str(), S_IRUSR | S_IWUSR | S_IXUSR) == 0;
 #endif
